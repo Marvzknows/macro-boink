@@ -1,4 +1,4 @@
-const colors = {
+export const colors = {
   bg: "#18181A",
   surface: "#232326",
   border: "#2F2F33",
@@ -9,4 +9,13 @@ const colors = {
   protein: "#85B7EB",
   carbs: "#FAC775",
   fat: "#C0DD97",
+};
+
+export const globalStyles = {
+  container: {
+    flex: 1,
+    backgroundColor: colors.bg,
+    paddingTop: 60,
+    paddingHorizontal: 20,
+  },
 };
