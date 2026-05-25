@@ -1,11 +1,13 @@
-import { Text, View } from "react-native";
+import { StyleSheet, Text, View } from "react-native";
 
 const AddMeal = () => {
   return (
     <View>
-      <Text>ADD MEAL TAB</Text>
+      <Text>AddMeal</Text>
     </View>
   );
 };
 
 export default AddMeal;
+
+const styles = StyleSheet.create({});

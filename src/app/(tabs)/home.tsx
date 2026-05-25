@@ -1,11 +1,13 @@
-import { Text, View } from "react-native";
+import { StyleSheet, Text, View } from "react-native";
 
-const home = () => {
+const Home = () => {
   return (
     <View>
-      <Text>HOME TAB</Text>
+      <Text>home</Text>
     </View>
   );
 };
 
-export default home;
+export default Home;
+
+const styles = StyleSheet.create({});
