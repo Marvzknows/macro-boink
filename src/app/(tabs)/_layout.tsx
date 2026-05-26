@@ -11,23 +11,68 @@ const TabsLayout = () => {
         tabBarStyle: {
           backgroundColor: colors.bg,
           borderTopColor: colors.textMuted,
+          paddingTop: 8,
         },
-        tabBarActiveTintColor: colors.primaryOnDark,
-        tabBarInactiveTintColor: colors.text,
+        tabBarLabelStyle: {
+          fontSize: 12,
+          fontWeight: "bold",
+        },
+        tabBarActiveTintColor: colors.primary,
+        tabBarInactiveTintColor: colors.textMuted,
       }}
     >
       <Tabs.Screen
         name="index"
         options={{
           title: "Home",
-          tabBarIcon: ({ color, size }) => (
-            <Ionicons name="home" size={size} color={color} />
+          tabBarIcon: ({ color, size, focused }) => (
+            <Ionicons
+              name={focused ? "home-outline" : "home"}
+              size={size}
+              color={color}
+            />
           ),
         }}
       />
-      <Tabs.Screen name="meals" options={{ title: "Meals" }} />
-      <Tabs.Screen name="add-meal" options={{ title: "Add" }} />
-      <Tabs.Screen name="settings" options={{ title: "Settings" }} />
+      <Tabs.Screen
+        name="meals"
+        options={{
+          title: "Meals",
+          tabBarIcon: ({ color, size, focused }) => (
+            <Ionicons
+              name={focused ? "list-outline" : "list"}
+              size={size}
+              color={color}
+            />
+          ),
+        }}
+      />
+      <Tabs.Screen
+        name="add-meal"
+        options={{
+          title: "Add",
+          tabBarIcon: ({ color, size, focused }) => (
+            <Ionicons
+              name={focused ? "add-outline" : "add"}
+              size={size}
+              color={color}
+            />
+          ),
+        }}
+      />
+      <Tabs.Screen
+        name="settings"
+        options={{
+          title: "Settings",
+          tabBarIcon: ({ color, size, focused }) => (
+            <Ionicons
+              name={focused ? "settings-outline" : "settings"}
+              size={size}
+              color={color}
+            />
+          ),
+        }}
+      />
     </Tabs>
   );
 };
