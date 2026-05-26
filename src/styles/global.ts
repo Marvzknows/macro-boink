@@ -33,5 +33,6 @@ export const globalStyles = StyleSheet.create({
     backgroundColor: colors.border,
     paddingVertical: 18,
     borderRadius: 16,
+    marginBottom: 16,
   },
 });
