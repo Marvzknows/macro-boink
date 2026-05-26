@@ -1,4 +1,4 @@
-import { StyleSheet, Text, View } from "react-native";
+import { Text, View } from "react-native";
 
 const AddMeal = () => {
   return (
@@ -9,5 +9,3 @@ const AddMeal = () => {
 };
 
 export default AddMeal;
-
-const styles = StyleSheet.create({});
