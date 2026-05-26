@@ -12,10 +12,15 @@ export const colors = {
 };
 
 export const globalStyles = {
-  container: {
+  screen: {
     flex: 1,
     backgroundColor: colors.bg,
-    paddingTop: 60,
-    paddingHorizontal: 20,
+  },
+
+  container: {
+    // flex: 1,
+    backgroundColor: colors.bg,
+    // paddingTop: 60,
+    paddingHorizontal: 18,
   },
 };
