@@ -22,3 +22,7 @@ export const getFormattedDate = () => {
 
   return `${monthName} ${day}, ${year}`;
 };
+
+export const formatNumber = (num: number): string => {
+  return num.toLocaleString();
+};

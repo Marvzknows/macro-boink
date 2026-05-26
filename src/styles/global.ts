@@ -1,3 +1,5 @@
+import { StyleSheet } from "react-native";
+
 export const colors = {
   bg: "#18181A",
   surface: "#232326",
@@ -9,9 +11,10 @@ export const colors = {
   protein: "#85B7EB",
   carbs: "#FAC775",
   fat: "#C0DD97",
+  success: "#4FB06D",
 };
 
-export const globalStyles = {
+export const globalStyles = StyleSheet.create({
   screen: {
     flex: 1,
     backgroundColor: colors.bg,
@@ -23,4 +26,12 @@ export const globalStyles = {
     // paddingTop: 60,
     paddingHorizontal: 18,
   },
-};
+  cardContainer: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-around",
+    backgroundColor: colors.border,
+    paddingVertical: 18,
+    borderRadius: 16,
+  },
+});

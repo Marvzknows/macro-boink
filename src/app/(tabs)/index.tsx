@@ -1,7 +1,9 @@
 import Header from "@/components/header";
+import CalorieTracker from "@/components/home-components/calorie-tracker";
+import ProgressBar from "@/components/home-components/progress-bar";
 import { getFormattedDate } from "@/helper/helper";
-import { colors } from "@/styles/global";
-import { Text, ScrollView } from "react-native";
+import { colors, globalStyles } from "@/styles/global";
+import { Text, ScrollView, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
 export default function Home() {
@@ -11,21 +13,16 @@ export default function Home() {
         <Text style={{ color: colors.textMuted, marginBottom: 10 }}>
           {getFormattedDate()}
         </Text>
-
         <Header title="Good morning, Marvin" />
 
-        <Text style={{ color: colors.text, fontSize: 2, fontWeight: "bold" }}>
-          Good morning, Alex
-        </Text>
-        <Text
-          style={{
-            color: colors.textMuted,
-            borderColor: "red",
-            borderWidth: 1,
-          }}
-        >
-          laawfasfa Lorem ipsum dolor sit amet consectetur adipisicing elit. Au
-        </Text>
+        <View style={[globalStyles.cardContainer]}>
+          <ProgressBar current={1450} goal={2200} />
+          <CalorieTracker calorieLef={750} />
+        </View>
+
+        {/* other macro */}
+
+        {/* recent meals (show first recent 5) */}
       </ScrollView>
     </SafeAreaView>
   );
