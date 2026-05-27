@@ -4,6 +4,7 @@ import MacroBar from "@/components/home-components/macro-bar";
 import ProgressBar from "@/components/home-components/progress-bar";
 import { getFormattedDate } from "@/helper/helper";
 import { colors, globalStyles } from "@/styles/global";
+import { Link } from "expo-router";
 import { Text, ScrollView, View, StyleSheet } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
@@ -37,7 +38,22 @@ export default function Home() {
           <MacroBar label="Fat" current={42} max={70} color={colors.fat} />
         </View>
 
-        {/* recent meals (show first recent 5) */}
+        <View style={styles.recentMealHeader}>
+          <Header
+            title="Recent meals"
+            textStyle={{ fontSize: 24 }}
+            style={{ marginBottom: 0 }}
+          />
+          <Link href={"/(tabs)/meals"}>
+            <Text
+              style={{ color: colors.protein, fontWeight: "700", fontSize: 18 }}
+            >
+              See All
+            </Text>
+          </Link>
+        </View>
+
+        {/* first 5 recent meals list */}
       </ScrollView>
     </SafeAreaView>
   );
@@ -51,5 +67,10 @@ const styles = StyleSheet.create({
     padding: 18,
     borderRadius: 16,
     marginBottom: 16,
+  },
+  recentMealHeader: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "flex-end",
   },
 });
