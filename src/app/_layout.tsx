@@ -1,17 +1,25 @@
+import { AuthProvider, useAuth } from "@/context/AuthContext";
 import { colors } from "@/styles/global";
 import { router, Stack } from "expo-router";
 import { useEffect } from "react";
 
-export default function RootLayout() {
+function RootLayoutNav() {
+  const { session, loading } = useAuth();
   const isAuth = false;
 
   useEffect(() => {
-    if (!isAuth) {
-      router.replace("/(auth)/login");
+    // if (loading) return;
+    // if (session) {
+    //   router.replace("/(auth)/login");
+    // } else {
+    //   router.replace("/(tabs)");
+    // }
+    if (isAuth) {
+      router.replace("/(tabs)");
     } else {
-      router.replace("/");
+      router.replace("/(auth)/login");
     }
-  }, [isAuth]);
+  }, [session, loading]);
 
   return (
     <Stack>
@@ -20,10 +28,20 @@ export default function RootLayout() {
       <Stack.Screen
         name="meal/[id]"
         options={{
-          headerBackButtonDisplayMode: "minimal", // arrow only, no text
+          headerTitle: "",
+          headerBackButtonDisplayMode: "minimal",
           headerStyle: { backgroundColor: colors.bg },
+          headerTintColor: colors.text,
         }}
       />
     </Stack>
+  );
+}
+
+export default function RootLayout() {
+  return (
+    <AuthProvider>
+      <RootLayoutNav />
+    </AuthProvider>
   );
 }

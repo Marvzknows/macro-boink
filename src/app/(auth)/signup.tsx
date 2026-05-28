@@ -1,8 +1,11 @@
+import { useAuth } from "@/context/AuthContext";
 import { colors } from "@/styles/global";
 import { Ionicons } from "@expo/vector-icons";
-import { Link } from "expo-router";
+import { Link, router } from "expo-router";
 import { useState } from "react";
 import {
+  ActivityIndicator,
+  Alert,
   KeyboardAvoidingView,
   Platform,
   Pressable,
@@ -14,9 +17,30 @@ import {
 import { SafeAreaView } from "react-native-safe-area-context";
 
 export default function Signup() {
+  const { signUp } = useAuth();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
+
+  const handleSignup = async () => {
+    if (!email.trim() || !password.trim()) {
+      Alert.alert("Validation Error", "Email and password cannot be empty.");
+      return;
+    }
+    try {
+      setIsLoading(true);
+      await signUp(email, password);
+      router.push("/onboarding");
+    } catch (error) {
+      Alert.alert(
+        "Signup Error",
+        error instanceof Error ? error.message : "An unknown error occurred.",
+      );
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
   return (
     <SafeAreaView style={styles.screen}>
@@ -74,7 +98,13 @@ export default function Signup() {
               pressed && styles.buttonPressed,
             ]}
           >
-            <Text style={styles.buttonText}>CREATE ACCOUNT</Text>
+            {isLoading ? (
+              <ActivityIndicator color={colors.text} />
+            ) : (
+              <Text style={styles.buttonText} onPress={handleSignup}>
+                CREATE ACCOUNT
+              </Text>
+            )}
           </Pressable>
         </View>
 
