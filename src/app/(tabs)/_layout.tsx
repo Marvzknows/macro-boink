@@ -34,9 +34,11 @@ const TabsLayout = () => {
           ),
         }}
       />
+      {/* #region COMMING SOON */}
       <Tabs.Screen
         name="meals"
         options={{
+          href: null,
           title: "Meals",
           tabBarIcon: ({ color, size, focused }) => (
             <Ionicons
@@ -47,6 +49,7 @@ const TabsLayout = () => {
           ),
         }}
       />
+      {/* #endregion */}
       <Tabs.Screen
         name="add-meal"
         options={{

@@ -2,8 +2,10 @@ import Header from "@/components/header";
 import CalorieTracker from "@/components/home-components/calorie-tracker";
 import MacroBar from "@/components/home-components/macro-bar";
 import ProgressBar from "@/components/home-components/progress-bar";
+import RecentMealCard from "@/components/home-components/recent-meal-card";
 import { getFormattedDate } from "@/helper/helper";
 import { colors, globalStyles } from "@/styles/global";
+import { recentMeals } from "@/types/placeholder";
 import { Link } from "expo-router";
 import { Text, ScrollView, View, StyleSheet } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
@@ -54,6 +56,21 @@ export default function Home() {
         </View>
 
         {/* first 5 recent meals list */}
+        <View style={styles.recentMealsContainer}>
+          {recentMeals.length ? (
+            recentMeals.map((meal) => (
+              <RecentMealCard
+                key={meal.id}
+                id={meal.id}
+                title={meal.title}
+                time={meal.date}
+                calories={meal.kcal}
+              />
+            ))
+          ) : (
+            <Text style={{ color: colors.textMuted }}>No recent meals</Text>
+          )}
+        </View>
       </ScrollView>
     </SafeAreaView>
   );
@@ -72,5 +89,10 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "flex-end",
+    marginBottom: 16,
+  },
+  recentMealsContainer: {
+    flexDirection: "column",
+    gap: 8,
   },
 });
