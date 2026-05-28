@@ -7,9 +7,11 @@ export default function RootLayout() {
 
   useEffect(() => {
     if (!isAuth) {
-      return router.replace("/(auth)/login");
+      router.replace("/(auth)/login");
+    } else {
+      router.replace("/");
     }
-  }, []);
+  }, [isAuth]);
 
   return (
     <Stack>
