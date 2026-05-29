@@ -1,8 +1,11 @@
 import { colors } from "@/styles/global";
-import { Tabs } from "expo-router";
 import { Ionicons } from "@expo/vector-icons";
+import { Tabs } from "expo-router";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 const TabsLayout = () => {
+  const insets = useSafeAreaInsets();
+
   return (
     <Tabs
       initialRouteName="index"
@@ -12,6 +15,8 @@ const TabsLayout = () => {
           backgroundColor: colors.bg,
           borderTopColor: colors.textMuted,
           paddingTop: 8,
+          paddingBottom: insets.bottom,
+          height: 63 + insets.bottom,
         },
         tabBarLabelStyle: {
           fontSize: 12,
