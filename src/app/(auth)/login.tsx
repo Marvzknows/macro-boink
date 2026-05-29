@@ -1,8 +1,11 @@
+import { useAuth } from "@/context/AuthContext";
 import { colors } from "@/styles/global";
 import { Ionicons } from "@expo/vector-icons";
 import { Link } from "expo-router";
 import { useState } from "react";
 import {
+  ActivityIndicator,
+  Alert,
   KeyboardAvoidingView,
   Platform,
   Pressable,
@@ -14,9 +17,24 @@ import {
 import { SafeAreaView } from "react-native-safe-area-context";
 
 export default function Login() {
+  const { signIn } = useAuth();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
+
+  const handleLogin = async () => {
+    if (!email.trim() || !password.trim()) {
+      Alert.alert("Validation Error", "Email and password cannot be empty.");
+      return;
+    }
+    setIsLoading(true);
+    const error = await signIn(email.trim(), password);
+    setIsLoading(false);
+    if (error) {
+      Alert.alert("Login Error", error);
+    }
+  };
 
   return (
     <SafeAreaView style={styles.screen}>
@@ -76,12 +94,18 @@ export default function Login() {
 
           {/* Submit */}
           <Pressable
+            onPress={handleLogin}
+            disabled={isLoading}
             style={({ pressed }) => [
               styles.button,
               pressed && styles.buttonPressed,
             ]}
           >
-            <Text style={styles.buttonText}>SIGN IN</Text>
+            {isLoading ? (
+              <ActivityIndicator color={colors.text} />
+            ) : (
+              <Text style={styles.buttonText}>SIGN IN</Text>
+            )}
           </Pressable>
         </View>
 

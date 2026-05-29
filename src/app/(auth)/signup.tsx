@@ -28,18 +28,14 @@ export default function Signup() {
       Alert.alert("Validation Error", "Email and password cannot be empty.");
       return;
     }
-    try {
-      setIsLoading(true);
-      await signUp(email, password);
-      router.push("/onboarding");
-    } catch (error) {
-      Alert.alert(
-        "Signup Error",
-        error instanceof Error ? error.message : "An unknown error occurred.",
-      );
-    } finally {
-      setIsLoading(false);
+    setIsLoading(true);
+    const error = await signUp(email.trim(), password);
+    setIsLoading(false);
+    if (error) {
+      Alert.alert("Signup Error", error);
+      return;
     }
+    router.replace("/onboarding");
   };
 
   return (
@@ -93,6 +89,8 @@ export default function Signup() {
           </View>
 
           <Pressable
+            onPress={handleSignup}
+            disabled={isLoading}
             style={({ pressed }) => [
               styles.button,
               pressed && styles.buttonPressed,
@@ -101,9 +99,7 @@ export default function Signup() {
             {isLoading ? (
               <ActivityIndicator color={colors.text} />
             ) : (
-              <Text style={styles.buttonText} onPress={handleSignup}>
-                CREATE ACCOUNT
-              </Text>
+              <Text style={styles.buttonText}>CREATE ACCOUNT</Text>
             )}
           </Pressable>
         </View>
