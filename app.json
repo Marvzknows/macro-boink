@@ -8,7 +8,8 @@
     "scheme": "myapp",
     "userInterfaceStyle": "automatic",
     "ios": {
-      "icon": "./assets/expo.icon"
+      "icon": "./assets/expo.icon",
+      "bundleIdentifier": "com.marvzknows.MB"
     },
     "android": {
       "adaptiveIcon": {
@@ -43,12 +44,12 @@
       "reactCompiler": true,
       "srcDir": true
     },
+    "owner": "marvzknows",
     "extra": {
       "router": {},
       "eas": {
-        "projectId": "6044abba-62fe-4d13-b501-bb0754088a70"
+        "projectId": "6f19af7e-3af0-44cd-9bed-8cd73861fe70"
       }
-    },
-    "owner": "marvzknows"
+    }
   }
 }
