@@ -26,10 +26,18 @@ const AddMeal = () => {
   const [notes, setNotes] = useState("");
 
   const handleSave = () => {
+    if (!mealName.trim()) {
+      Toast.show({
+        type: "error",
+        text1: "Meal name is required",
+        text2: "Please enter a name for your meal.",
+      });
+      return;
+    }
+
     Toast.show({
       type: "success",
-      text1: "Hello",
-      text2: "This is some something",
+      text1: "Meal saved!",
     });
     console.log({ mealName, mealType, calories, protein, carbs, fat, notes });
   };
