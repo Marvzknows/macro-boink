@@ -10,6 +10,7 @@ import {
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useState } from "react";
+import Toast from "react-native-toast-message";
 
 type MealType = "Breakfast" | "Lunch" | "Dinner" | "Snack";
 
@@ -25,6 +26,11 @@ const AddMeal = () => {
   const [notes, setNotes] = useState("");
 
   const handleSave = () => {
+    Toast.show({
+      type: "success",
+      text1: "Hello",
+      text2: "This is some something",
+    });
     console.log({ mealName, mealType, calories, protein, carbs, fat, notes });
   };
 

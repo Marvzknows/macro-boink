@@ -1,7 +1,10 @@
+import toastConfig from "@/config/toastConfig";
 import { AuthProvider, useAuth } from "@/context/AuthContext";
 import { colors } from "@/styles/global";
 import { Stack } from "expo-router";
 import { ActivityIndicator, View } from "react-native";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
+import Toast from "react-native-toast-message";
 
 function RootLayoutNav() {
   const { session, loading } = useAuth();
@@ -46,9 +49,12 @@ function RootLayoutNav() {
 }
 
 export default function RootLayout() {
+  const insets = useSafeAreaInsets();
+
   return (
     <AuthProvider>
       <RootLayoutNav />
+      <Toast config={toastConfig} topOffset={insets.top + 10} />
     </AuthProvider>
   );
 }
