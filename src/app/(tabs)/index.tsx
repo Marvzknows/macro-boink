@@ -58,15 +58,17 @@ export default function Home() {
         {/* first 5 recent meals list */}
         <View style={styles.recentMealsContainer}>
           {recentMeals.length ? (
-            recentMeals.map((meal) => (
-              <RecentMealCard
-                key={meal.id}
-                id={meal.id}
-                title={meal.title}
-                time={meal.date}
-                calories={meal.kcal}
-              />
-            ))
+            recentMeals
+              .slice(0, 5)
+              .map((meal) => (
+                <RecentMealCard
+                  key={meal.id}
+                  id={meal.id}
+                  title={meal.title}
+                  time={meal.date}
+                  calories={meal.kcal}
+                />
+              ))
           ) : (
             <Text style={{ color: colors.textMuted }}>No recent meals</Text>
           )}
