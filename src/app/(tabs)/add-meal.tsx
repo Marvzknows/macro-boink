@@ -1,23 +1,170 @@
 import { colors } from "@/styles/global";
 import Header from "@/components/header";
-import { StyleSheet, Text, TextInput, View } from "react-native";
+import {
+  StyleSheet,
+  Text,
+  TextInput,
+  TouchableOpacity,
+  View,
+  ScrollView,
+} from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
+import { useState } from "react";
+
+type MealType = "Breakfast" | "Lunch" | "Dinner" | "Snack";
+
+const MEAL_TYPES: MealType[] = ["Breakfast", "Lunch", "Dinner", "Snack"];
 
 const AddMeal = () => {
-  return (
-    <SafeAreaView
-      style={{ flex: 1, backgroundColor: colors.bg, paddingHorizontal: 18 }}
-    >
-      <Header title="Add Meal" />
+  const [mealName, setMealName] = useState("");
+  const [mealType, setMealType] = useState<MealType>("Lunch");
+  const [calories, setCalories] = useState("");
+  const [protein, setProtein] = useState("");
+  const [carbs, setCarbs] = useState("");
+  const [fat, setFat] = useState("");
+  const [notes, setNotes] = useState("");
 
-      <View style={styles.fieldGroup}>
-        <Text style={styles.label}>Meal name</Text>
-        <TextInput
-          placeholder="Enter meal name"
-          style={styles.input}
-          placeholderTextColor={colors.textMuted}
-        />
-      </View>
+  const handleSave = () => {
+    console.log({ mealName, mealType, calories, protein, carbs, fat, notes });
+  };
+
+  return (
+    <SafeAreaView style={{ flex: 1, backgroundColor: colors.bg }}>
+      <ScrollView
+        contentContainerStyle={{ paddingHorizontal: 18, paddingBottom: 32 }}
+        keyboardShouldPersistTaps="handled"
+        showsVerticalScrollIndicator={false}
+      >
+        <Header title="Add meal" />
+
+        {/* Meal name */}
+        <View style={styles.fieldGroup}>
+          <Text style={styles.label}>Meal name</Text>
+          <TextInput
+            value={mealName}
+            onChangeText={setMealName}
+            placeholder="Enter meal name"
+            style={styles.input}
+            placeholderTextColor={colors.textMuted}
+          />
+        </View>
+
+        {/* Meal type */}
+        <View style={styles.fieldGroup}>
+          <Text style={styles.label}>Meal type</Text>
+          <View style={styles.pillRow}>
+            {MEAL_TYPES.map((type) => (
+              <TouchableOpacity
+                key={type}
+                onPress={() => setMealType(type)}
+                style={[styles.pill, mealType === type && styles.pillActive]}
+                activeOpacity={0.75}
+              >
+                <Text
+                  style={[
+                    styles.pillText,
+                    mealType === type && styles.pillTextActive,
+                  ]}
+                >
+                  {type}
+                </Text>
+              </TouchableOpacity>
+            ))}
+          </View>
+        </View>
+
+        {/* Calories */}
+        <View style={styles.fieldGroup}>
+          <Text style={styles.label}>Calories (kcal)</Text>
+          <TextInput
+            value={calories}
+            onChangeText={setCalories}
+            placeholder="0"
+            keyboardType="numeric"
+            style={styles.input}
+            placeholderTextColor={colors.textMuted}
+          />
+        </View>
+
+        {/* Macros */}
+        <View style={styles.fieldGroup}>
+          <Text style={styles.label}>Macros (grams)</Text>
+          <View style={styles.macroRow}>
+            <View style={styles.macroCard}>
+              <Text style={[styles.macroLabel, { color: colors.protein }]}>
+                PROTEIN
+              </Text>
+              <TextInput
+                value={protein}
+                onChangeText={(text) => {
+                  const numbersOnly = text.replace(/[^0-9]/g, "");
+                  setProtein(numbersOnly);
+                }}
+                placeholder="0"
+                keyboardType="numeric"
+                style={styles.macroInput}
+                placeholderTextColor={colors.textMuted}
+              />
+            </View>
+            <View style={styles.macroCard}>
+              <Text style={[styles.macroLabel, { color: colors.carbs }]}>
+                CARBS
+              </Text>
+              <TextInput
+                value={carbs}
+                onChangeText={(text) => {
+                  const numbersOnly = text.replace(/[^0-9]/g, "");
+                  setCarbs(numbersOnly);
+                }}
+                placeholder="0"
+                keyboardType="numeric"
+                style={styles.macroInput}
+                placeholderTextColor={colors.textMuted}
+              />
+            </View>
+            <View style={styles.macroCard}>
+              <Text style={[styles.macroLabel, { color: colors.fat }]}>
+                FAT
+              </Text>
+              <TextInput
+                value={fat}
+                onChangeText={(text) => {
+                  const numbersOnly = text.replace(/[^0-9]/g, "");
+                  setFat(numbersOnly);
+                }}
+                placeholder="0"
+                keyboardType="numeric"
+                style={styles.macroInput}
+                placeholderTextColor={colors.textMuted}
+              />
+            </View>
+          </View>
+        </View>
+
+        {/* Notes */}
+        <View style={styles.fieldGroup}>
+          <Text style={styles.label}>Notes (optional)</Text>
+          <TextInput
+            value={notes}
+            onChangeText={setNotes}
+            placeholder="Add a note..."
+            multiline
+            numberOfLines={3}
+            style={[styles.input, styles.notesInput]}
+            placeholderTextColor={colors.textMuted}
+            textAlignVertical="top"
+          />
+        </View>
+
+        {/* Save button */}
+        <TouchableOpacity
+          style={styles.saveButton}
+          onPress={handleSave}
+          activeOpacity={0.85}
+        >
+          <Text style={styles.saveButtonText}>Save meal</Text>
+        </TouchableOpacity>
+      </ScrollView>
     </SafeAreaView>
   );
 };
@@ -26,13 +173,13 @@ export default AddMeal;
 
 const styles = StyleSheet.create({
   fieldGroup: {
-    marginBottom: 16,
+    marginBottom: 20,
   },
   label: {
-    fontSize: 16,
+    fontSize: 14,
     color: colors.textMuted,
-    letterSpacing: 1,
-    marginBottom: 8,
+    letterSpacing: 0.5,
+    marginBottom: 10,
     fontWeight: "600",
   },
   input: {
@@ -44,6 +191,82 @@ const styles = StyleSheet.create({
     paddingVertical: 14,
     color: colors.text,
     fontWeight: "700",
+    fontSize: 16,
+  },
+  notesInput: {
+    minHeight: 80,
+    fontWeight: "500",
     fontSize: 14,
+  },
+
+  // Meal type pills
+  pillRow: {
+    flexDirection: "row",
+    flexWrap: "wrap",
+    gap: 8,
+  },
+  pill: {
+    paddingHorizontal: 18,
+    paddingVertical: 10,
+    borderRadius: 20,
+    backgroundColor: colors.surface,
+    borderWidth: 2,
+    borderColor: colors.border,
+  },
+  pillActive: {
+    backgroundColor: "#742D17BF",
+    borderColor: "#742D17BF",
+  },
+  pillText: {
+    color: colors.textMuted,
+    fontWeight: "600",
+    fontSize: 14,
+  },
+  pillTextActive: {
+    color: colors.primary,
+  },
+
+  // Macro cards
+  macroRow: {
+    flexDirection: "row",
+    gap: 10,
+  },
+  macroCard: {
+    flex: 1,
+    backgroundColor: colors.surface,
+    borderColor: colors.border,
+    borderWidth: 2,
+    borderRadius: 12,
+    paddingVertical: 14,
+    paddingHorizontal: 12,
+    alignItems: "center",
+    gap: 6,
+  },
+  macroLabel: {
+    fontSize: 11,
+    fontWeight: "800",
+    letterSpacing: 1,
+  },
+  macroInput: {
+    color: colors.text,
+    fontWeight: "700",
+    fontSize: 20,
+    textAlign: "center",
+    padding: 0, // remove default Android padding
+  },
+
+  // Save button
+  saveButton: {
+    backgroundColor: colors.primary,
+    borderRadius: 14,
+    paddingVertical: 18,
+    alignItems: "center",
+    marginTop: 8,
+  },
+  saveButtonText: {
+    color: colors.text,
+    fontWeight: "700",
+    fontSize: 16,
+    letterSpacing: 0.5,
   },
 });
