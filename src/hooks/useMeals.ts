@@ -2,7 +2,7 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useState } from "react";
 import uuid from "react-native-uuid";
 
-const STORAGE_KEY = "meals";
+export const STORAGE_KEY = "meals";
 
 export type Meal = {
   id: string;

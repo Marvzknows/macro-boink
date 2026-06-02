@@ -4,6 +4,7 @@ import MacroBar from "@/components/home-components/macro-bar";
 import ProgressBar from "@/components/home-components/progress-bar";
 import RecentMealCard from "@/components/home-components/recent-meal-card";
 import { getFormattedDate } from "@/helper/helper";
+import useDashboard from "@/hooks/useDashboard";
 import useMeals from "@/hooks/useMeals";
 import { colors, globalStyles } from "@/styles/global";
 import { Link, useFocusEffect } from "expo-router";
@@ -19,10 +20,16 @@ import { SafeAreaView } from "react-native-safe-area-context";
 
 export default function Home() {
   const { meals, getMeals, loading: fetchinMeals } = useMeals();
+  const {
+    dashboardStats,
+    getTodayStats,
+    loading: fetchingStats,
+  } = useDashboard();
 
   useFocusEffect(
     useCallback(() => {
       getMeals();
+      getTodayStats();
     }, []),
   );
 
@@ -35,24 +42,37 @@ export default function Home() {
         <Header title="Good morning, Marvin" />
 
         <View style={[globalStyles.cardContainer]}>
-          <ProgressBar current={1450} goal={2200} />
-          <CalorieTracker calorieLef={750} />
+          {fetchingStats ? (
+            <ActivityIndicator />
+          ) : (
+            <>
+              <ProgressBar current={dashboardStats.calorie_count} goal={2200} />
+              <CalorieTracker
+                calorieLef={2200 - dashboardStats.calorie_count}
+              />
+            </>
+          )}
         </View>
 
         <View style={styles.macroBarContainer}>
           <MacroBar
             label="Protein"
-            current={98}
+            current={dashboardStats.protein_count}
             max={150}
             color={colors.protein}
           />
           <MacroBar
             label="Carbs"
-            current={175}
+            current={dashboardStats.carbs_count}
             max={250}
             color={colors.carbs}
           />
-          <MacroBar label="Fat" current={42} max={70} color={colors.fat} />
+          <MacroBar
+            label="Fat"
+            current={dashboardStats.fat_count}
+            max={70}
+            color={colors.fat}
+          />
         </View>
 
         <View style={styles.recentMealHeader}>
