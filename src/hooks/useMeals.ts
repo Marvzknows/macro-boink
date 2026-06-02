@@ -95,12 +95,24 @@ const useMeals = () => {
     }
   };
 
+  // clear all meal
+  const clearAllMeals = async () => {
+    try {
+      await AsyncStorage.setItem(STORAGE_KEY, JSON.stringify([]));
+      setMeals([]);
+    } catch (error) {
+      console.error("Error updating meals:", error);
+      throw error;
+    }
+  };
+
   return {
     meals,
     getMeals,
     createMeal,
     updateMeal,
     deleteMeal,
+    clearAllMeals,
   };
 };
 
