@@ -8,11 +8,11 @@ import {
   View,
   ScrollView,
 } from "react-native";
-import { SafeAreaView } from "react-native-safe-area-context";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { useState } from "react";
 import Toast from "react-native-toast-message";
 
-type MealType = "Breakfast" | "Lunch" | "Dinner" | "Snack";
+export type MealType = "Breakfast" | "Lunch" | "Dinner" | "Snack";
 
 const MEAL_TYPES: MealType[] = ["Breakfast", "Lunch", "Dinner", "Snack"];
 
@@ -24,6 +24,8 @@ const AddMeal = () => {
   const [carbs, setCarbs] = useState("");
   const [fat, setFat] = useState("");
   const [notes, setNotes] = useState("");
+
+  const inset = useSafeAreaInsets();
 
   const handleSave = () => {
     if (!mealName.trim()) {
@@ -43,7 +45,14 @@ const AddMeal = () => {
   };
 
   return (
-    <SafeAreaView style={{ flex: 1, backgroundColor: colors.bg }}>
+    <View
+      style={{
+        flex: 1,
+        backgroundColor: colors.bg,
+        paddingTop: inset.top,
+        // paddingBottom: 32 + inset.bottom,
+      }}
+    >
       <ScrollView
         contentContainerStyle={{ paddingHorizontal: 18, paddingBottom: 32 }}
         keyboardShouldPersistTaps="handled"
@@ -179,7 +188,7 @@ const AddMeal = () => {
           <Text style={styles.saveButtonText}>Save meal</Text>
         </TouchableOpacity>
       </ScrollView>
-    </SafeAreaView>
+    </View>
   );
 };
 
