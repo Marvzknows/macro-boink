@@ -11,23 +11,38 @@ import {
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { useState } from "react";
 import Toast from "react-native-toast-message";
+import useMeals from "@/hooks/useMeals";
+import { useRouter } from "expo-router";
 
 export type MealType = "Breakfast" | "Lunch" | "Dinner" | "Snack";
 
 const MEAL_TYPES: MealType[] = ["Breakfast", "Lunch", "Dinner", "Snack"];
 
 const AddMeal = () => {
+  const { createMeal } = useMeals();
   const [mealName, setMealName] = useState("");
-  const [mealType, setMealType] = useState<MealType>("Lunch");
+  const [mealType, setMealType] = useState<MealType | "">("");
   const [calories, setCalories] = useState("");
   const [protein, setProtein] = useState("");
   const [carbs, setCarbs] = useState("");
   const [fat, setFat] = useState("");
   const [notes, setNotes] = useState("");
+  const [saving, setSaving] = useState(false);
 
   const inset = useSafeAreaInsets();
+  const router = useRouter();
 
-  const handleSave = () => {
+  const resetForm = () => {
+    setMealName("");
+    setCalories("");
+    setProtein("");
+    setCarbs("");
+    setFat("");
+    setNotes("");
+    setMealType("");
+  };
+
+  const handleSave = async () => {
     if (!mealName.trim()) {
       Toast.show({
         type: "error",
@@ -37,11 +52,29 @@ const AddMeal = () => {
       return;
     }
 
-    Toast.show({
-      type: "success",
-      text1: "Meal saved!",
-    });
-    console.log({ mealName, mealType, calories, protein, carbs, fat, notes });
+    try {
+      setSaving(true);
+      await createMeal({
+        meal_name: mealName,
+        meal_type: mealType,
+        calories: calories ? Number(calories) : undefined,
+        protein: protein ? Number(protein) : undefined,
+        carbs: carbs ? Number(carbs) : undefined,
+        fat: fat ? Number(fat) : undefined,
+        notes: notes ?? "",
+      });
+      Toast.show({
+        type: "success",
+        text1: "Meal saved!",
+      });
+      resetForm();
+      router.push("/(tabs)");
+    } catch (error) {
+      Toast.show({ type: "error", text1: "Failed to save meal" });
+      console.error("Error saving meal", error);
+    } finally {
+      setSaving(false);
+    }
   };
 
   return (
@@ -184,8 +217,11 @@ const AddMeal = () => {
           style={styles.saveButton}
           onPress={handleSave}
           activeOpacity={0.85}
+          disabled={saving}
         >
-          <Text style={styles.saveButtonText}>Save meal</Text>
+          <Text style={styles.saveButtonText}>
+            {saving ? "Saving..." : "Save meal"}
+          </Text>
         </TouchableOpacity>
       </ScrollView>
     </View>

@@ -1,6 +1,6 @@
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useState } from "react";
-import { randomUUID } from "expo-crypto";
+import uuid from "react-native-uuid";
 
 const STORAGE_KEY = "meals";
 
@@ -37,7 +37,7 @@ const useMeals = () => {
     try {
       const newMeal: Meal = {
         ...input,
-        id: randomUUID(),
+        id: uuid.v4(),
         created_at: new Date().toISOString(),
       };
 
