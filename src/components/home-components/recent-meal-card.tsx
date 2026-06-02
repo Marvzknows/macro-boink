@@ -1,3 +1,4 @@
+import { formatDateTime } from "@/helper/helper";
 import { colors } from "@/styles/global";
 import { Ionicons } from "@expo/vector-icons";
 import { router } from "expo-router";
@@ -22,7 +23,7 @@ const RecentMealCard = ({ id, title, time, calories }: Props) => {
         <Text style={styles.title}>{title}</Text>
 
         <Text style={styles.subtitle}>
-          {time} - {calories} kcal
+          {formatDateTime(time)} - {calories} kcal
         </Text>
       </View>
 

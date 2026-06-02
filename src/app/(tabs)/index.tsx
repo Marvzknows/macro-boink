@@ -4,13 +4,28 @@ import MacroBar from "@/components/home-components/macro-bar";
 import ProgressBar from "@/components/home-components/progress-bar";
 import RecentMealCard from "@/components/home-components/recent-meal-card";
 import { getFormattedDate } from "@/helper/helper";
+import useMeals from "@/hooks/useMeals";
 import { colors, globalStyles } from "@/styles/global";
-import { recentMeals } from "@/types/placeholder";
-import { Link } from "expo-router";
-import { Text, ScrollView, View, StyleSheet } from "react-native";
+import { Link, useFocusEffect } from "expo-router";
+import { useCallback, useEffect } from "react";
+import {
+  Text,
+  ScrollView,
+  View,
+  StyleSheet,
+  ActivityIndicator,
+} from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
 export default function Home() {
+  const { meals, getMeals, loading: fetchinMeals } = useMeals();
+
+  useFocusEffect(
+    useCallback(() => {
+      getMeals();
+    }, []),
+  );
+
   return (
     <SafeAreaView style={{ flex: 1, backgroundColor: colors.bg }}>
       <ScrollView contentContainerStyle={{ paddingHorizontal: 18 }}>
@@ -57,16 +72,18 @@ export default function Home() {
 
         {/* first 5 recent meals list */}
         <View style={styles.recentMealsContainer}>
-          {recentMeals.length ? (
-            recentMeals
+          {fetchinMeals ? (
+            <ActivityIndicator color={colors.primary} />
+          ) : meals.length ? (
+            meals
               .slice(0, 5)
               .map((meal) => (
                 <RecentMealCard
                   key={meal.id}
                   id={meal.id}
-                  title={meal.title}
-                  time={meal.date}
-                  calories={meal.kcal}
+                  title={meal.meal_name}
+                  time={meal.created_at}
+                  calories={meal.calories ?? 0}
                 />
               ))
           ) : (

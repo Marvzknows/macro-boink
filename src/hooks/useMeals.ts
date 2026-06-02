@@ -20,28 +20,36 @@ type MealPayloadT = Omit<Meal, "id" | "created_at">;
 
 const useMeals = () => {
   const [meals, setMeals] = useState<Meal[]>([]);
+  const [loading, setLoading] = useState(false);
 
   // Read
   const getMeals = async () => {
     try {
+      setLoading(true);
       const raw = await AsyncStorage.getItem(STORAGE_KEY);
       setMeals(raw ? JSON.parse(raw) : []);
     } catch (error) {
       console.error("Error fetching meals:", error);
       throw error;
+    } finally {
+      setLoading(false);
     }
   };
 
   // Create
   const createMeal = async (input: MealPayloadT) => {
     try {
+      // read existing from storage, not from state
+      const raw = await AsyncStorage.getItem(STORAGE_KEY);
+      const existing: Meal[] = raw ? JSON.parse(raw) : [];
+
       const newMeal: Meal = {
         ...input,
         id: uuid.v4(),
         created_at: new Date().toISOString(),
       };
 
-      const updatedMeals = [...meals, newMeal];
+      const updatedMeals = [newMeal, ...existing];
       await AsyncStorage.setItem(STORAGE_KEY, JSON.stringify(updatedMeals));
       setMeals(updatedMeals);
       return newMeal;
@@ -54,20 +62,16 @@ const useMeals = () => {
   // Update
   const updateMeal = async (mealId: string, input: MealPayloadT) => {
     try {
-      const mealExist = meals.find((m) => m.id === mealId);
+      const raw = await AsyncStorage.getItem(STORAGE_KEY);
+      const existing: Meal[] = raw ? JSON.parse(raw) : [];
 
-      if (!mealExist) {
-        throw new Error("Meal not found");
-      }
+      const mealExist = existing.find((m) => m.id === mealId);
+      if (!mealExist) throw new Error("Meal not found");
 
-      const updatedMeals = meals.map((m) =>
-        m.id === mealId
-          ? {
-              ...m,
-              ...input,
-            }
-          : m,
+      const updatedMeals = existing.map((m) =>
+        m.id === mealId ? { ...m, ...input } : m,
       );
+
       await AsyncStorage.setItem(STORAGE_KEY, JSON.stringify(updatedMeals));
       setMeals(updatedMeals);
       return updatedMeals.find((m) => m.id === mealId);
@@ -80,13 +84,13 @@ const useMeals = () => {
   // Delete
   const deleteMeal = async (mealId: string) => {
     try {
+      const raw = await AsyncStorage.getItem(STORAGE_KEY);
+      const existing: Meal[] = raw ? JSON.parse(raw) : [];
+
       const mealExist = meals.find((m) => m.id === mealId);
+      if (!mealExist) throw new Error("Meal not found");
 
-      if (!mealExist) {
-        throw new Error("Meal not found");
-      }
-
-      const updatedMeals = meals.filter((m) => m.id !== mealId);
+      const updatedMeals = existing.filter((m) => m.id !== mealId);
       await AsyncStorage.setItem(STORAGE_KEY, JSON.stringify(updatedMeals));
       setMeals(updatedMeals);
     } catch (error) {
@@ -107,6 +111,7 @@ const useMeals = () => {
   };
 
   return {
+    loading,
     meals,
     getMeals,
     createMeal,
