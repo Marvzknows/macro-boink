@@ -35,10 +35,11 @@ export const formatTime = (iso: string) => {
 };
 
 export const formatDateTime = (iso: string) => {
-  return new Date(iso).toLocaleString([], {
+  return new Date(iso).toLocaleString("en-US", {
     month: "short",
     day: "numeric",
-    hour: "2-digit",
+    hour: "numeric",
     minute: "2-digit",
+    hour12: true,
   });
 };
