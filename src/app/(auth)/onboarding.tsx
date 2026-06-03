@@ -1,4 +1,4 @@
-import { StyleSheet, Text, View } from "react-native";
+import { Text, View } from "react-native";
 
 const Onboarding = () => {
   return (
@@ -10,4 +10,4 @@ const Onboarding = () => {
 
 export default Onboarding;
 
-const styles = StyleSheet.create({});
+// const styles = StyleSheet.create({});

@@ -8,7 +8,7 @@ import useDashboard from "@/hooks/useDashboard";
 import useMeals from "@/hooks/useMeals";
 import { colors, globalStyles } from "@/styles/global";
 import { Link, useFocusEffect } from "expo-router";
-import { useCallback, useEffect } from "react";
+import { useCallback } from "react";
 import {
   Text,
   ScrollView,
@@ -30,7 +30,7 @@ export default function Home() {
     useCallback(() => {
       getMeals();
       getTodayStats();
-    }, []),
+    }, [getMeals, getTodayStats]),
   );
 
   return (
