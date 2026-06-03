@@ -30,7 +30,7 @@ export default function Home() {
     useCallback(() => {
       getMeals();
       getTodayStats();
-    }, [getMeals, getTodayStats]),
+    }, []),
   );
 
   return (

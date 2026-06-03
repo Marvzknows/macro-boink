@@ -43,6 +43,15 @@ function RootLayoutNav() {
             headerTintColor: colors.text,
           }}
         />
+        <Stack.Screen
+          name="camera-scan"
+          options={{
+            headerTitle: "Scan Food",
+            headerBackButtonDisplayMode: "minimal",
+            headerStyle: { backgroundColor: colors.bg },
+            headerTintColor: colors.text,
+          }}
+        />
       </Stack.Protected>
     </Stack>
   );

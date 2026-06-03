@@ -13,6 +13,7 @@ import { useState } from "react";
 import Toast from "react-native-toast-message";
 import useMeals from "@/hooks/useMeals";
 import { useRouter } from "expo-router";
+import { Ionicons } from "@expo/vector-icons";
 
 export type MealType = "Breakfast" | "Lunch" | "Dinner" | "Snack";
 
@@ -87,11 +88,34 @@ const AddMeal = () => {
       }}
     >
       <ScrollView
-        contentContainerStyle={{ paddingHorizontal: 18, paddingBottom: 32 }}
+        contentContainerStyle={{ paddingHorizontal: 18, paddingVertical: 32 }}
         keyboardShouldPersistTaps="handled"
         showsVerticalScrollIndicator={false}
       >
-        <Header title="Add meal" />
+        <View style={{ flexDirection: "row", justifyContent: "space-between" }}>
+          <Header title="Add meal" />
+          <TouchableOpacity
+            onPress={() => router.push("/camera-scan")}
+            style={{
+              flexDirection: "row",
+              alignItems: "center",
+              gap: 6,
+              backgroundColor: colors.surface,
+              borderWidth: 2,
+              borderColor: colors.border,
+              paddingHorizontal: 14,
+              paddingVertical: 8,
+              borderRadius: 20,
+            }}
+          >
+            <Ionicons name="camera" size={18} color={colors.primary} />
+            <Text
+              style={{ color: colors.primary, fontWeight: "700", fontSize: 13 }}
+            >
+              Scan food
+            </Text>
+          </TouchableOpacity>
+        </View>
 
         {/* Meal name */}
         <View style={styles.fieldGroup}>
