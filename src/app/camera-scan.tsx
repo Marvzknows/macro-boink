@@ -1,9 +1,11 @@
 import FontAwesome6 from "@expo/vector-icons/FontAwesome6";
 import { CameraType, CameraView, useCameraPermissions } from "expo-camera";
 import { Image } from "expo-image";
+import * as ImagePicker from "expo-image-picker";
 import { router } from "expo-router";
 import { useRef, useState } from "react";
 import {
+  Alert,
   Button,
   Pressable,
   StyleSheet,
@@ -20,6 +22,32 @@ export default function CameraScan() {
   const [facing, setFacing] = useState<CameraType>("back");
   const [flash, setFlash] = useState(false);
   const { bottom } = useSafeAreaInsets();
+
+  const pickImage = async () => {
+    const permissionResult =
+      await ImagePicker.requestMediaLibraryPermissionsAsync();
+
+    if (!permissionResult.granted) {
+      Alert.alert(
+        "Permission required",
+        "Permission to access the media library is required.",
+      );
+      return;
+    }
+
+    let result = await ImagePicker.launchImageLibraryAsync({
+      mediaTypes: ["images"],
+      allowsEditing: true,
+      aspect: [4, 3],
+      quality: 1,
+    });
+
+    // console.log(result);
+
+    if (!result.canceled) {
+      setUri(result.assets[0].uri);
+    }
+  };
 
   if (!permission) return null;
 
@@ -125,7 +153,7 @@ export default function CameraScan() {
 
       {/* Bottom bar */}
       <View style={[s.bottomBar, { paddingBottom: Math.max(bottom, 12) }]}>
-        <TouchableOpacity style={s.sideBtn}>
+        <TouchableOpacity style={s.sideBtn} onPress={pickImage}>
           <FontAwesome6 name="image" size={22} color="#fff" />
           <Text style={s.sideLabel}>Gallery</Text>
         </TouchableOpacity>
