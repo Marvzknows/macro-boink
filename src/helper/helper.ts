@@ -1,3 +1,5 @@
+import * as FileSystem from "expo-file-system/legacy";
+
 export const getFormattedDate = () => {
   const date = new Date();
 
@@ -42,4 +44,11 @@ export const formatDateTime = (iso: string) => {
     minute: "2-digit",
     hour12: true,
   });
+};
+
+export const uriToBase64 = async (uri: string): Promise<string> => {
+  const base64 = await FileSystem.readAsStringAsync(uri, {
+    encoding: FileSystem.EncodingType.Base64,
+  });
+  return base64;
 };

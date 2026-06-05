@@ -1,3 +1,6 @@
+import NutritionScreen from "@/components/add-meal/nutrition-screen";
+import ScanningScreen from "@/components/add-meal/scanning-screen";
+import { uriToBase64 } from "@/helper/helper";
 import FontAwesome6 from "@expo/vector-icons/FontAwesome6";
 import { CameraType, CameraView, useCameraPermissions } from "expo-camera";
 import { Image } from "expo-image";
@@ -15,18 +18,75 @@ import {
 } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
+const GEMINI_API_KEY = process.env.EXPO_PUBLIC_GEMINI_API_KEY ?? "";
+const GEMINI_URL = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${GEMINI_API_KEY}`;
+
+export type NutritionResult = {
+  food: string;
+  calories: string;
+  protein: string;
+  carbs: string;
+  fat: string;
+  summary: string;
+};
+
+const analyzeFood = async (imageUri: string): Promise<NutritionResult> => {
+  const base64 = await uriToBase64(imageUri);
+
+  const body = {
+    contents: [
+      {
+        parts: [
+          {
+            text: `You are a nutrition expert. Analyze this food image and respond ONLY with a valid JSON object (no markdown, no explanation) in this exact format:
+{
+  "food": "name of the food",
+  "calories": "estimated kcal per serving",
+  "protein": "grams of protein",
+  "carbs": "grams of carbohydrates",
+  "fat": "grams of fat",
+  "summary": "one sentence description"
+}
+If no food is detected, still return the JSON with "Unknown" values.`,
+          },
+          {
+            inline_data: {
+              mime_type: "image/jpeg",
+              data: base64,
+            },
+          },
+        ],
+      },
+    ],
+  };
+
+  const res = await fetch(GEMINI_URL, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(body),
+  });
+
+  if (!res.ok) throw new Error(`Gemini error: ${res.status}`);
+
+  const json = await res.json();
+  const text = json.candidates?.[0]?.content?.parts?.[0]?.text ?? "";
+  const clean = text.replace(/```json|```/g, "").trim();
+  return JSON.parse(clean) as NutritionResult;
+};
+
 export default function CameraScan() {
   const [permission, requestPermission] = useCameraPermissions();
   const ref = useRef<CameraView>(null);
   const [uri, setUri] = useState<string | null>(null);
   const [facing, setFacing] = useState<CameraType>("back");
   const [flash, setFlash] = useState(false);
+  const [scanning, setScanning] = useState(false);
+  const [result, setResult] = useState<NutritionResult | null>(null);
   const { bottom } = useSafeAreaInsets();
 
   const pickImage = async () => {
     const permissionResult =
       await ImagePicker.requestMediaLibraryPermissionsAsync();
-
     if (!permissionResult.granted) {
       Alert.alert(
         "Permission required",
@@ -34,19 +94,40 @@ export default function CameraScan() {
       );
       return;
     }
-
-    let result = await ImagePicker.launchImageLibraryAsync({
+    const res = await ImagePicker.launchImageLibraryAsync({
       mediaTypes: ["images"],
       allowsEditing: true,
       aspect: [4, 3],
       quality: 1,
     });
+    if (!res.canceled) setUri(res.assets[0].uri);
+  };
 
-    // console.log(result);
-
-    if (!result.canceled) {
-      setUri(result.assets[0].uri);
+  const scanFood = async () => {
+    if (!uri) return;
+    if (!GEMINI_API_KEY) {
+      Alert.alert(
+        "Missing API Key",
+        "Add EXPO_PUBLIC_GEMINI_API_KEY to your .env file.",
+      );
+      return;
     }
+    setScanning(true);
+    try {
+      const nutrition = await analyzeFood(uri);
+      setResult(nutrition);
+    } catch (e) {
+      Alert.alert("Error", "Could not analyze the image. Please try again.");
+      console.error(e);
+    } finally {
+      setScanning(false);
+    }
+  };
+
+  const retake = () => {
+    setUri(null);
+    setResult(null);
+    setScanning(false);
   };
 
   if (!permission) return null;
@@ -67,15 +148,24 @@ export default function CameraScan() {
     if (photo?.uri) setUri(photo.uri);
   };
 
+  if (scanning && uri) return <ScanningScreen uri={uri} />;
+
+  if (result && uri) {
+    return <NutritionScreen uri={uri} result={result} onRetake={retake} />;
+  }
+
   if (uri) {
     return (
       <View style={s.center}>
         <Image
           source={{ uri }}
           contentFit="contain"
-          style={{ width: 300, aspectRatio: 1 }}
+          style={{ width: 300, aspectRatio: 1, borderRadius: 16 }}
         />
-        <Button onPress={() => setUri(null)} title="Retake" />
+        <View style={{ flexDirection: "row", gap: 16 }}>
+          <Button onPress={retake} title="Retake" />
+          <Button onPress={scanFood} title="Scan Food" />
+        </View>
       </View>
     );
   }
@@ -96,7 +186,6 @@ export default function CameraScan() {
         <View style={{ flexDirection: "row", height: 260 }}>
           <View style={{ flex: 1, backgroundColor: "rgba(0,0,0,0.55)" }} />
           <View style={{ width: 290 }}>
-            {/* Corner brackets */}
             {[
               { top: 0, left: 0 },
               { top: 0, right: 0 },
@@ -242,5 +331,66 @@ const s = StyleSheet.create({
     height: 58,
     borderRadius: 29,
     backgroundColor: "#fff",
+  },
+});
+
+const n = StyleSheet.create({
+  foodName: {
+    color: "#fff",
+    fontSize: 26,
+    fontWeight: "800",
+    marginBottom: 6,
+  },
+  summary: {
+    color: "#888",
+    fontSize: 14,
+    marginBottom: 24,
+    lineHeight: 20,
+  },
+  macroRow: {
+    flexDirection: "row",
+    gap: 12,
+    marginBottom: 12,
+  },
+  macroCard: {
+    flex: 1,
+    backgroundColor: "#14131e",
+    borderRadius: 14,
+    padding: 16,
+    borderLeftWidth: 4,
+  },
+  macroLabel: {
+    color: "#666",
+    fontSize: 12,
+    fontWeight: "600",
+    letterSpacing: 0.8,
+    textTransform: "uppercase",
+    marginBottom: 6,
+  },
+  macroValue: {
+    fontSize: 24,
+    fontWeight: "800",
+  },
+  macroUnit: {
+    color: "#666",
+    fontSize: 13,
+  },
+  disclaimer: {
+    color: "#444",
+    fontSize: 12,
+    marginTop: 8,
+    marginBottom: 28,
+    fontStyle: "italic",
+  },
+  retakeBtn: {
+    backgroundColor: "#3b82f6",
+    borderRadius: 14,
+    paddingVertical: 15,
+    alignItems: "center",
+  },
+  retakeBtnText: {
+    color: "#fff",
+    fontWeight: "700",
+    fontSize: 16,
   },
 });
