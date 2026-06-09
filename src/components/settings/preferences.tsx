@@ -1,5 +1,5 @@
 import { colors } from "@/styles/global";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import {
   StyleSheet,
   Text,
@@ -9,6 +9,8 @@ import {
   Platform,
   Modal,
   TouchableOpacity,
+  Linking,
+  Alert,
 } from "react-native";
 import Ionicons from "@expo/vector-icons/Ionicons";
 import DateTimePicker, {
@@ -18,6 +20,7 @@ import {
   cancelMealReminder,
   scheduleMealReminder,
 } from "@/utils/notificationService";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 const Divider = () => (
   <View
@@ -30,16 +33,38 @@ const Divider = () => (
 );
 
 const Preferences = () => {
+  const PREFERENCE_STORAGE_KEY = "meal_reminder";
   const [isEnabled, setIsEnabled] = useState(false);
   const [time, setTime] = useState(new Date());
   const [tempTime, setTempTime] = useState(new Date()); // iOS: hold until confirmed
   const [showPicker, setShowPicker] = useState(false);
 
+  const requestIgnoreBatteryOptimization = () => {
+    if (Platform.OS === "android") {
+      Alert.alert(
+        "Enable Reliable Reminders",
+        "To ensure reminders work when the app is closed:\n\n1. Enable AutoStart for MacroBoink\n2. Set Battery Saver to 'No restrictions'\n\nGo to: Settings → Apps → MacroBoink",
+        [
+          { text: "Not Now", style: "cancel" },
+          {
+            text: "Open Settings",
+            onPress: () =>
+              Linking.sendIntent(
+                "android.settings.IGNORE_BATTERY_OPTIMIZATION_SETTINGS",
+              ),
+          },
+        ],
+      );
+    }
+  };
+
   const toggleSwitch = async () => {
     const next = !isEnabled;
     setIsEnabled(next);
+    await savePrefs(next, time);
     if (next) {
       await scheduleMealReminder(time);
+      requestIgnoreBatteryOptimization();
     } else {
       await cancelMealReminder();
     }
@@ -61,6 +86,7 @@ const Preferences = () => {
     setShowPicker(false);
     if (value) {
       setTime(value);
+      await savePrefs(isEnabled, value);
       if (isEnabled) {
         await scheduleMealReminder(value);
       }
@@ -75,12 +101,32 @@ const Preferences = () => {
   const confirmIOS = async () => {
     setTime(tempTime);
     setShowPicker(false);
+    await savePrefs(isEnabled, tempTime);
     if (isEnabled) {
       await scheduleMealReminder(tempTime);
     }
   };
 
   const cancelIOS = () => setShowPicker(false);
+
+  useEffect(() => {
+    const loadPrefs = async () => {
+      const json = await AsyncStorage.getItem(PREFERENCE_STORAGE_KEY);
+      if (json) {
+        const { enabled, isoTime } = JSON.parse(json);
+        setIsEnabled(enabled);
+        setTime(new Date(isoTime));
+      }
+    };
+    loadPrefs();
+  }, []);
+
+  const savePrefs = async (enabled: boolean, selectedTime: Date) => {
+    await AsyncStorage.setItem(
+      PREFERENCE_STORAGE_KEY,
+      JSON.stringify({ enabled, isoTime: selectedTime.toISOString() }),
+    );
+  };
 
   return (
     <View style={styles.container}>
