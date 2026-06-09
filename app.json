@@ -13,7 +13,8 @@
       "infoPlist": {
         "NSCameraUsageDescription": "This app uses the camera to scan QR codes and capture images.",
         "NSMicrophoneUsageDescription": "This app uses the microphone for video recording.",
-        "NSPhotoLibraryUsageDescription": "This app accesses your photo library to select food images for macro estimates."
+        "NSPhotoLibraryUsageDescription": "This app accesses your photo library to select food images for macro estimates.",
+        "UIBackgroundModes": ["remote-notification"]
       }
     },
     "android": {
@@ -24,7 +25,12 @@
         "monochromeImage": "./assets/images/android-icon-monochrome.png"
       },
       "predictiveBackGestureEnabled": false,
-      "package": "com.marvzknows.MB"
+      "package": "com.marvzknows.MB",
+      "permissions": [
+        "android.permission.RECEIVE_BOOT_COMPLETED",
+        "android.permission.VIBRATE",
+        "android.permission.USE_EXACT_ALARM"
+      ]
     },
     "web": {
       "output": "static",
@@ -70,6 +76,16 @@
         {
           "supportsOpeningDocumentsInPlace": true,
           "enableFileSharing": true
+        }
+      ],
+      [
+        "expo-notifications",
+        {
+          "icon": "./assets/images/icon.png",
+          "color": "#ffffff",
+          "defaultChannel": "default",
+          "sounds": [],
+          "enableBackgroundRemoteNotifications": false
         }
       ],
       "expo-secure-store",

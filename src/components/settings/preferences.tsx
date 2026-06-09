@@ -14,6 +14,10 @@ import Ionicons from "@expo/vector-icons/Ionicons";
 import DateTimePicker, {
   DateTimePickerChangeEvent,
 } from "@react-native-community/datetimepicker";
+import {
+  cancelMealReminder,
+  scheduleMealReminder,
+} from "@/utils/notificationService";
 
 const Divider = () => (
   <View
@@ -31,7 +35,15 @@ const Preferences = () => {
   const [tempTime, setTempTime] = useState(new Date()); // iOS: hold until confirmed
   const [showPicker, setShowPicker] = useState(false);
 
-  const toggleSwitch = () => setIsEnabled((prev) => !prev);
+  const toggleSwitch = async () => {
+    const next = !isEnabled;
+    setIsEnabled(next);
+    if (next) {
+      await scheduleMealReminder(time);
+    } else {
+      await cancelMealReminder();
+    }
+  };
 
   const formatTime = (date: Date) =>
     date.toLocaleTimeString([], { hour: "numeric", minute: "2-digit" });
@@ -42,12 +54,17 @@ const Preferences = () => {
   };
 
   // // Android: fires once on confirm
-  const handleAndroidChange = (
+  const handleAndroidChange = async (
     _event: DateTimePickerChangeEvent,
     value?: Date,
   ) => {
     setShowPicker(false);
-    if (value) setTime(value);
+    if (value) {
+      setTime(value);
+      if (isEnabled) {
+        await scheduleMealReminder(value);
+      }
+    }
   };
 
   // iOS: fires on every scroll tick — just update temp
@@ -55,9 +72,12 @@ const Preferences = () => {
     if (value) setTempTime(value);
   };
 
-  const confirmIOS = () => {
+  const confirmIOS = async () => {
     setTime(tempTime);
     setShowPicker(false);
+    if (isEnabled) {
+      await scheduleMealReminder(tempTime);
+    }
   };
 
   const cancelIOS = () => setShowPicker(false);
@@ -106,7 +126,7 @@ const Preferences = () => {
           value={time}
           mode="time"
           is24Hour={false}
-          display="default"
+          display="spinner"
           onValueChange={handleAndroidChange}
         />
       )}
