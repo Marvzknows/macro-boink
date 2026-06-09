@@ -12,7 +12,7 @@ import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { useState } from "react";
 import Toast from "react-native-toast-message";
 import useMeals from "@/hooks/useMeals";
-import { useRouter } from "expo-router";
+import { useLocalSearchParams, useRouter } from "expo-router";
 import { Ionicons } from "@expo/vector-icons";
 
 export type MealType = "Breakfast" | "Lunch" | "Dinner" | "Snack";
@@ -20,13 +20,27 @@ export type MealType = "Breakfast" | "Lunch" | "Dinner" | "Snack";
 const MEAL_TYPES: MealType[] = ["Breakfast", "Lunch", "Dinner", "Snack"];
 
 const AddMeal = () => {
+  const {
+    caloriesParams,
+    carbsParams,
+    proteinParams,
+    fatParams,
+    mealNameParams,
+  } = useLocalSearchParams<{
+    caloriesParams?: string;
+    carbsParams?: string;
+    proteinParams?: string;
+    fatParams?: string;
+    mealNameParams?: string;
+  }>();
+
   const { createMeal } = useMeals();
-  const [mealName, setMealName] = useState("");
+  const [mealName, setMealName] = useState(mealNameParams ?? "");
   const [mealType, setMealType] = useState<MealType | "">("");
-  const [calories, setCalories] = useState("");
-  const [protein, setProtein] = useState("");
-  const [carbs, setCarbs] = useState("");
-  const [fat, setFat] = useState("");
+  const [calories, setCalories] = useState(caloriesParams ?? "");
+  const [protein, setProtein] = useState(proteinParams ?? "");
+  const [carbs, setCarbs] = useState(carbsParams ?? "");
+  const [fat, setFat] = useState(fatParams ?? "");
   const [notes, setNotes] = useState("");
   const [saving, setSaving] = useState(false);
 

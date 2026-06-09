@@ -74,7 +74,7 @@ const Preferences = () => {
     date.toLocaleTimeString([], { hour: "numeric", minute: "2-digit" });
 
   const openPicker = () => {
-    setTempTime(time); // seed temp with current
+    setTempTime(time);
     setShowPicker(true);
   };
 

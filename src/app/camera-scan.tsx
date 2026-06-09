@@ -118,7 +118,7 @@ export default function CameraScan() {
       setResult(nutrition);
     } catch (e) {
       Alert.alert("Error", "Could not analyze the image. Please try again.");
-      console.error(e);
+      console.error("ERROR: ", e);
     } finally {
       setScanning(false);
     }

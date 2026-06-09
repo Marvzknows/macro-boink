@@ -9,6 +9,7 @@ import {
 } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import MacroCard from "./macro-card";
+import { router } from "expo-router";
 
 type Props = {
   uri: string;
@@ -18,6 +19,21 @@ type Props = {
 
 const NutritionScreen = ({ uri, result, onRetake }: Props) => {
   const { top, bottom } = useSafeAreaInsets();
+  const stripUnit = (value: string) => value.replace(/[^0-9.]/g, "").trim();
+
+  const handleSave = () => {
+    router.push({
+      pathname: "/(tabs)/add-meal",
+      params: {
+        caloriesParams: stripUnit(result?.calories),
+        carbsParams: stripUnit(result?.carbs),
+        proteinParams: stripUnit(result?.protein),
+        fatParams: stripUnit(result?.fat),
+        mealNameParams: result?.food,
+      },
+    });
+  };
+
   return (
     <ScrollView
       style={{ flex: 1, backgroundColor: "#0a0a0f" }}
@@ -67,7 +83,7 @@ const NutritionScreen = ({ uri, result, onRetake }: Props) => {
         <TouchableOpacity style={n.retakeBtn} onPress={onRetake}>
           <Text style={n.retakeBtnText}>Scan Another</Text>
         </TouchableOpacity>
-        <TouchableOpacity style={n.retakeBtn}>
+        <TouchableOpacity style={n.retakeBtn} onPress={handleSave}>
           <Text style={n.retakeBtnText}>Save</Text>
         </TouchableOpacity>
       </View>
