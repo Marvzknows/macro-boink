@@ -1,3 +1,4 @@
+import Preferences from "@/components/settings/preferences";
 import { useAuth } from "@/context/AuthContext";
 import { colors } from "@/styles/global";
 import { Pressable, StyleSheet, Text, View } from "react-native";
@@ -14,6 +15,11 @@ const Settings = () => {
         {session?.user?.email ? (
           <Text style={styles.email}>Signed in as {session.user.email}</Text>
         ) : null}
+
+        <View style={{ flexDirection: "column", gap: 4, marginBottom: 14 }}>
+          <Text style={styles.textHeader}>PREFERENCES</Text>
+          <Preferences />
+        </View>
 
         <Pressable
           onPress={signOut}
@@ -66,5 +72,9 @@ const styles = StyleSheet.create({
     fontWeight: "700",
     fontSize: 15,
     letterSpacing: 0.5,
+  },
+  textHeader: {
+    color: colors.textMuted,
+    fontWeight: "700",
   },
 });
