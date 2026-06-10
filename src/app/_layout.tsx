@@ -6,6 +6,8 @@ import { ActivityIndicator, View } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import Toast from "react-native-toast-message";
 import * as Notifications from "expo-notifications";
+import { BottomSheetModalProvider } from "@gorhom/bottom-sheet";
+import { GestureHandlerRootView } from "react-native-gesture-handler";
 
 Notifications.setNotificationHandler({
   handleNotification: async () => ({
@@ -37,33 +39,37 @@ function RootLayoutNav() {
   const isAuthed = !!session;
 
   return (
-    <Stack>
-      <Stack.Protected guard={!isAuthed}>
-        <Stack.Screen name="(auth)" options={{ headerShown: false }} />
-      </Stack.Protected>
+    <GestureHandlerRootView style={{ flex: 1 }}>
+      <BottomSheetModalProvider>
+        <Stack>
+          <Stack.Protected guard={!isAuthed}>
+            <Stack.Screen name="(auth)" options={{ headerShown: false }} />
+          </Stack.Protected>
 
-      <Stack.Protected guard={isAuthed}>
-        <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
-        <Stack.Screen
-          name="meal/[id]"
-          options={{
-            headerTitle: "",
-            headerBackButtonDisplayMode: "minimal",
-            headerStyle: { backgroundColor: colors.bg },
-            headerTintColor: colors.text,
-          }}
-        />
-        <Stack.Screen
-          name="camera-scan"
-          options={{
-            headerTitle: "Scan Food",
-            headerBackButtonDisplayMode: "minimal",
-            headerStyle: { backgroundColor: colors.bg },
-            headerTintColor: colors.text,
-          }}
-        />
-      </Stack.Protected>
-    </Stack>
+          <Stack.Protected guard={isAuthed}>
+            <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
+            <Stack.Screen
+              name="meal/[id]"
+              options={{
+                headerTitle: "",
+                headerBackButtonDisplayMode: "minimal",
+                headerStyle: { backgroundColor: colors.bg },
+                headerTintColor: colors.text,
+              }}
+            />
+            <Stack.Screen
+              name="camera-scan"
+              options={{
+                headerTitle: "Scan Food",
+                headerBackButtonDisplayMode: "minimal",
+                headerStyle: { backgroundColor: colors.bg },
+                headerTintColor: colors.text,
+              }}
+            />
+          </Stack.Protected>
+        </Stack>
+      </BottomSheetModalProvider>
+    </GestureHandlerRootView>
   );
 }
 
