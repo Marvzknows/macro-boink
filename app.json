@@ -14,7 +14,10 @@
         "NSCameraUsageDescription": "This app uses the camera to scan QR codes and capture images.",
         "NSMicrophoneUsageDescription": "This app uses the microphone for video recording.",
         "NSPhotoLibraryUsageDescription": "This app accesses your photo library to select food images for macro estimates.",
-        "UIBackgroundModes": ["remote-notification"]
+        "UIBackgroundModes": [
+          "remote-notification"
+        ],
+        "ITSAppUsesNonExemptEncryption": false
       }
     },
     "android": {
@@ -30,7 +33,12 @@
         "android.permission.RECEIVE_BOOT_COMPLETED",
         "android.permission.VIBRATE",
         "android.permission.USE_EXACT_ALARM",
-        "android.permission.SCHEDULE_EXACT_ALARM"
+        "android.permission.SCHEDULE_EXACT_ALARM",
+        "android.permission.CAMERA",
+        "android.permission.RECORD_AUDIO",
+        "android.permission.READ_EXTERNAL_STORAGE",
+        "android.permission.WRITE_EXTERNAL_STORAGE",
+        "android.permission.INTERNET"
       ]
     },
     "web": {
@@ -100,7 +108,7 @@
     "extra": {
       "router": {},
       "eas": {
-        "projectId": "6f19af7e-3af0-44cd-9bed-8cd73861fe70"
+        "projectId": "4cbf98e6-d9ed-4174-a2ea-362f57c56a4d"
       }
     }
   }
