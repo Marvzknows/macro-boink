@@ -21,16 +21,7 @@ import {
   scheduleMealReminder,
 } from "@/utils/notificationService";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-
-const Divider = () => (
-  <View
-    style={{
-      borderTopWidth: 0.4,
-      borderColor: colors.textMuted,
-      marginHorizontal: 8,
-    }}
-  />
-);
+import Divider from "./divider";
 
 const Preferences = () => {
   const PREFERENCE_STORAGE_KEY = "meal_reminder";

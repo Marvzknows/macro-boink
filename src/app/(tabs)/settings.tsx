@@ -1,3 +1,4 @@
+import DailyGoals from "@/components/settings/daily-goals";
 import Preferences from "@/components/settings/preferences";
 import { useAuth } from "@/context/AuthContext";
 import { colors } from "@/styles/global";
@@ -19,6 +20,12 @@ const Settings = () => {
         <View style={{ flexDirection: "column", gap: 4, marginBottom: 14 }}>
           <Text style={styles.textHeader}>PREFERENCES</Text>
           <Preferences />
+        </View>
+
+        {/* Daily goals */}
+        <View style={{ flexDirection: "column", gap: 4, marginBottom: 14 }}>
+          <Text style={styles.textHeader}>DAILY GOALS</Text>
+          <DailyGoals />
         </View>
 
         <Pressable
