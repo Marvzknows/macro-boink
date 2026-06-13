@@ -15,6 +15,7 @@ import type { BottomSheetDefaultBackdropProps } from "@gorhom/bottom-sheet/lib/t
 import { colors } from "@/styles/global";
 import Divider from "./divider";
 import { useCallback } from "react";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 type Props = {
   ref: React.RefObject<BottomSheetModal | null>;
@@ -25,6 +26,7 @@ type Props = {
 };
 
 const DailyGoalsModal = ({ ref, unit, value, setValue, handleSave }: Props) => {
+  const insets = useSafeAreaInsets();
   const renderBackdrop = useCallback(
     (props: BottomSheetDefaultBackdropProps) => (
       <BottomSheetBackdrop
@@ -46,7 +48,12 @@ const DailyGoalsModal = ({ ref, unit, value, setValue, handleSave }: Props) => {
       backgroundStyle={modalStyles.sheetBackground}
       handleIndicatorStyle={modalStyles.handle}
     >
-      <BottomSheetView style={modalStyles.contentContainer}>
+      <BottomSheetView
+        style={[
+          modalStyles.contentContainer,
+          { paddingBottom: 32 + insets.bottom },
+        ]}
+      >
         {/* Header */}
         <View style={modalStyles.header}>
           <Text style={modalStyles.title}>Set Goal</Text>
@@ -58,7 +65,7 @@ const DailyGoalsModal = ({ ref, unit, value, setValue, handleSave }: Props) => {
         {/* Input area */}
         <View style={modalStyles.inputRow}>
           <BottomSheetTextInput
-            value={String(value ?? 0)}
+            value={value}
             onChangeText={(text) => {
               const numericValue = text.replace(/[^0-9]/g, "");
               setValue(numericValue);
@@ -131,9 +138,11 @@ const modalStyles = StyleSheet.create({
     paddingHorizontal: 4,
   },
   inputPlaceholder: {
-    color: colors.textMuted,
+    color: colors.text,
     fontSize: 40,
     fontWeight: "700",
+    flex: 1,
+    padding: 0,
   },
   unitLabel: {
     color: colors.textMuted,

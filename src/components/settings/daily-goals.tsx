@@ -35,8 +35,7 @@ const DailyGoalsButton = ({
 const DailyGoals = () => {
   const [unit, setUnit] = useState<keyof DailyGoalT>("kcal");
   const [value, setValue] = useState("");
-  const { dailyGoal, readDailyGoal, resetDailyGoal, setDailyGoalValue } =
-    useDailyGoal();
+  const { dailyGoal, readDailyGoal, setDailyGoalValue } = useDailyGoal();
 
   const bottomSheetModalRef = useRef<BottomSheetModal>(null);
 
