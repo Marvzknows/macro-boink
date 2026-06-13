@@ -1,13 +1,10 @@
 import { colors } from "@/styles/global";
 import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import Divider from "./divider";
-import { useCallback, useRef } from "react";
-import {
-  BottomSheetModal,
-  BottomSheetView,
-  BottomSheetBackdrop,
-} from "@gorhom/bottom-sheet";
-import type { BottomSheetDefaultBackdropProps } from "@gorhom/bottom-sheet/lib/typescript/components/bottomSheetBackdrop/types";
+import { useCallback, useEffect, useRef, useState } from "react";
+import { BottomSheetModal } from "@gorhom/bottom-sheet";
+import DailyGoalsModal from "./daily-goals-modal";
+import useDailyGoal, { DailyGoalT } from "@/hooks/useDailyGoal";
 
 type DailyGoalsButtonProps = {
   title: string;
@@ -36,95 +33,67 @@ const DailyGoalsButton = ({
 };
 
 const DailyGoals = () => {
+  const [unit, setUnit] = useState<keyof DailyGoalT>("kcal");
+  const [value, setValue] = useState("");
+  const { dailyGoal, readDailyGoal, resetDailyGoal, setDailyGoalValue } =
+    useDailyGoal();
+
   const bottomSheetModalRef = useRef<BottomSheetModal>(null);
 
-  const handleOpen = useCallback(() => {
-    console.log("OPEN");
+  const handleOpen = useCallback((unit: keyof DailyGoalT, value: string) => {
+    setUnit(unit);
+    setValue(value);
     bottomSheetModalRef.current?.present();
   }, []);
 
-  const renderBackdrop = useCallback(
-    (props: BottomSheetDefaultBackdropProps) => (
-      <BottomSheetBackdrop
-        {...props}
-        disappearsOnIndex={-1}
-        appearsOnIndex={0}
-        opacity={0.6}
-      />
-    ),
-    [],
-  );
+  useEffect(() => {
+    readDailyGoal();
+  }, []);
+
+  const handleSave = async () => {
+    await setDailyGoalValue(unit, value);
+    setValue("");
+    bottomSheetModalRef.current?.dismiss();
+  };
 
   return (
     <View style={styles.container}>
       <DailyGoalsButton
         title="Calories"
-        value="2000"
+        value={dailyGoal.kcal ?? "0"}
         unit="kcal"
-        onPress={handleOpen}
+        onPress={() => handleOpen("kcal", dailyGoal.kcal ?? "0")}
       />
       <Divider />
       <DailyGoalsButton
         title="Carbs"
-        value="250"
+        value={dailyGoal.carbs ?? "0"}
         unit="g"
-        onPress={handleOpen}
+        onPress={() => handleOpen("carbs", dailyGoal.carbs ?? "0")}
       />
       <Divider />
       <DailyGoalsButton
         title="Protein"
-        value="150"
+        value={dailyGoal.protein ?? "0"}
         unit="g"
-        onPress={handleOpen}
+        onPress={() => handleOpen("protein", dailyGoal.protein ?? "0")}
       />
       <Divider />
-      <DailyGoalsButton title="Fat" value="65" unit="g" onPress={handleOpen} />
+      <DailyGoalsButton
+        title="Fat"
+        value={dailyGoal.fat ?? "0"}
+        unit="g"
+        onPress={() => handleOpen("fat", dailyGoal.fat ?? "0")}
+      />
 
       {/* ======== MODAL SHEET ======== */}
-      <BottomSheetModal
+      <DailyGoalsModal
         ref={bottomSheetModalRef}
-        // onChange={handleSheetChanges}
-        enablePanDownToClose
-        backdropComponent={renderBackdrop}
-        backgroundStyle={modalStyles.sheetBackground}
-        handleIndicatorStyle={modalStyles.handle}
-      >
-        <BottomSheetView style={modalStyles.contentContainer}>
-          {/* Header */}
-          <View style={modalStyles.header}>
-            <Text style={modalStyles.title}>Set Goal</Text>
-            <Text style={modalStyles.subtitle}>Enter your daily target</Text>
-          </View>
-
-          <Divider />
-
-          {/* Input area — wire this up when ready */}
-          <View style={modalStyles.inputRow}>
-            <Text style={modalStyles.inputPlaceholder}>0</Text>
-            <Text style={modalStyles.unitLabel}>kcal</Text>
-          </View>
-
-          <Divider />
-
-          {/* Actions */}
-          <View style={modalStyles.buttonRow}>
-            <TouchableOpacity
-              style={[modalStyles.btn, modalStyles.btnCancel]}
-              onPress={() => bottomSheetModalRef.current?.dismiss()}
-              activeOpacity={0.7}
-            >
-              <Text style={modalStyles.btnCancelText}>Cancel</Text>
-            </TouchableOpacity>
-
-            <TouchableOpacity
-              style={[modalStyles.btn, modalStyles.btnSave]}
-              activeOpacity={0.7}
-            >
-              <Text style={modalStyles.btnSaveText}>Save</Text>
-            </TouchableOpacity>
-          </View>
-        </BottomSheetView>
-      </BottomSheetModal>
+        unit={unit}
+        value={value}
+        setValue={setValue}
+        handleSave={handleSave}
+      />
     </View>
   );
 };
@@ -165,77 +134,5 @@ const styles = StyleSheet.create({
     color: colors.textMuted,
     fontSize: 13,
     fontWeight: "400",
-  },
-});
-
-const modalStyles = StyleSheet.create({
-  sheetBackground: {
-    backgroundColor: colors.surface,
-  },
-  handle: {
-    backgroundColor: colors.border,
-    width: 40,
-  },
-  contentContainer: {
-    paddingHorizontal: 20,
-    paddingBottom: 32,
-    gap: 20,
-  },
-  header: {
-    paddingTop: 4,
-    gap: 4,
-  },
-  title: {
-    color: colors.text,
-    fontSize: 18,
-    fontWeight: "700",
-  },
-  subtitle: {
-    color: colors.textMuted,
-    fontSize: 14,
-    fontWeight: "400",
-  },
-  inputRow: {
-    flexDirection: "row",
-    alignItems: "baseline",
-    gap: 8,
-    paddingVertical: 12,
-    paddingHorizontal: 4,
-  },
-  inputPlaceholder: {
-    color: colors.textMuted,
-    fontSize: 40,
-    fontWeight: "700",
-  },
-  unitLabel: {
-    color: colors.textMuted,
-    fontSize: 18,
-    fontWeight: "600",
-  },
-  buttonRow: {
-    flexDirection: "row",
-    gap: 12,
-  },
-  btn: {
-    flex: 1,
-    paddingVertical: 14,
-    borderRadius: 10,
-    alignItems: "center",
-  },
-  btnCancel: {
-    backgroundColor: colors.border,
-  },
-  btnCancelText: {
-    color: colors.text,
-    fontSize: 15,
-    fontWeight: "600",
-  },
-  btnSave: {
-    backgroundColor: colors.primary,
-  },
-  btnSaveText: {
-    color: colors.text,
-    fontSize: 15,
-    fontWeight: "700",
   },
 });
