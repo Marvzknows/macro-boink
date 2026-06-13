@@ -58,8 +58,11 @@ const DailyGoalsModal = ({ ref, unit, value, setValue, handleSave }: Props) => {
         {/* Input area */}
         <View style={modalStyles.inputRow}>
           <BottomSheetTextInput
-            value={String(value)}
-            onChangeText={setValue}
+            value={String(value ?? 0)}
+            onChangeText={(text) => {
+              const numericValue = text.replace(/[^0-9]/g, "");
+              setValue(numericValue);
+            }}
             keyboardType="numeric"
             style={modalStyles.inputPlaceholder}
           />
