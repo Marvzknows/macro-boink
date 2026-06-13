@@ -4,6 +4,7 @@ import MacroBar from "@/components/home-components/macro-bar";
 import ProgressBar from "@/components/home-components/progress-bar";
 import RecentMealCard from "@/components/home-components/recent-meal-card";
 import { getFormattedDate } from "@/helper/helper";
+import useDailyGoal from "@/hooks/useDailyGoal";
 import useDashboard from "@/hooks/useDashboard";
 import useMeals from "@/hooks/useMeals";
 import { colors, globalStyles } from "@/styles/global";
@@ -25,11 +26,13 @@ export default function Home() {
     getTodayStats,
     loading: fetchingStats,
   } = useDashboard();
+  const { dailyGoal, readDailyGoal } = useDailyGoal();
 
   useFocusEffect(
     useCallback(() => {
       getMeals();
       getTodayStats();
+      readDailyGoal();
     }, []),
   );
 
@@ -46,9 +49,14 @@ export default function Home() {
             <ActivityIndicator />
           ) : (
             <>
-              <ProgressBar current={dashboardStats.calorie_count} goal={2200} />
+              <ProgressBar
+                current={dashboardStats.calorie_count}
+                goal={Number(dailyGoal.kcal)}
+              />
               <CalorieTracker
-                calorieLef={2200 - dashboardStats.calorie_count}
+                calorieLef={
+                  Number(dailyGoal.kcal) - dashboardStats.calorie_count
+                }
               />
             </>
           )}
@@ -58,19 +66,19 @@ export default function Home() {
           <MacroBar
             label="Protein"
             current={dashboardStats.protein_count}
-            max={150}
+            max={Number(dailyGoal.protein)}
             color={colors.protein}
           />
           <MacroBar
             label="Carbs"
             current={dashboardStats.carbs_count}
-            max={250}
+            max={Number(dailyGoal.carbs)}
             color={colors.carbs}
           />
           <MacroBar
             label="Fat"
             current={dashboardStats.fat_count}
-            max={70}
+            max={Number(dailyGoal.fat)}
             color={colors.fat}
           />
         </View>
