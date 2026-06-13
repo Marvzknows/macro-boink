@@ -5,6 +5,7 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import { BottomSheetModal } from "@gorhom/bottom-sheet";
 import DailyGoalsModal from "./daily-goals-modal";
 import useDailyGoal, { DailyGoalT } from "@/hooks/useDailyGoal";
+import ConfirmModal from "../confirm-modal";
 
 type DailyGoalsButtonProps = {
   title: string;
@@ -39,6 +40,7 @@ const DailyGoals = () => {
     useDailyGoal();
 
   const bottomSheetModalRef = useRef<BottomSheetModal>(null);
+  const confirmModalRef = useRef<BottomSheetModal>(null);
 
   const handleOpen = useCallback((unit: keyof DailyGoalT, value: string) => {
     setUnit(unit);
@@ -90,13 +92,20 @@ const DailyGoals = () => {
 
       <TouchableOpacity
         style={styles.resetBtn}
-        onPress={resetDailyGoal}
+        onPress={() => confirmModalRef.current?.present()}
         activeOpacity={0.7}
       >
         <Text style={styles.resetBtnText}>Reset to Default</Text>
       </TouchableOpacity>
 
       {/* ======== MODAL SHEET ======== */}
+      <ConfirmModal
+        ref={confirmModalRef}
+        title="Confirm Changes"
+        message="Are you sure you want to save these changes?"
+        onConfirm={resetDailyGoal}
+      />
+
       <DailyGoalsModal
         ref={bottomSheetModalRef}
         unit={unit}
