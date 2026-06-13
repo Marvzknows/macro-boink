@@ -35,7 +35,8 @@ const DailyGoalsButton = ({
 const DailyGoals = () => {
   const [unit, setUnit] = useState<keyof DailyGoalT>("kcal");
   const [value, setValue] = useState("");
-  const { dailyGoal, readDailyGoal, setDailyGoalValue } = useDailyGoal();
+  const { dailyGoal, readDailyGoal, resetDailyGoal, setDailyGoalValue } =
+    useDailyGoal();
 
   const bottomSheetModalRef = useRef<BottomSheetModal>(null);
 
@@ -56,34 +57,44 @@ const DailyGoals = () => {
   };
 
   return (
-    <View style={styles.container}>
-      <DailyGoalsButton
-        title="Calories"
-        value={dailyGoal.kcal ?? "0"}
-        unit="kcal"
-        onPress={() => handleOpen("kcal", dailyGoal.kcal ?? "0")}
-      />
-      <Divider />
-      <DailyGoalsButton
-        title="Carbs"
-        value={dailyGoal.carbs ?? "0"}
-        unit="g"
-        onPress={() => handleOpen("carbs", dailyGoal.carbs ?? "0")}
-      />
-      <Divider />
-      <DailyGoalsButton
-        title="Protein"
-        value={dailyGoal.protein ?? "0"}
-        unit="g"
-        onPress={() => handleOpen("protein", dailyGoal.protein ?? "0")}
-      />
-      <Divider />
-      <DailyGoalsButton
-        title="Fat"
-        value={dailyGoal.fat ?? "0"}
-        unit="g"
-        onPress={() => handleOpen("fat", dailyGoal.fat ?? "0")}
-      />
+    <View style={styles.wrapper}>
+      <View style={styles.container}>
+        <DailyGoalsButton
+          title="Calories"
+          value={dailyGoal.kcal ?? "0"}
+          unit="kcal"
+          onPress={() => handleOpen("kcal", dailyGoal.kcal ?? "0")}
+        />
+        <Divider />
+        <DailyGoalsButton
+          title="Carbs"
+          value={dailyGoal.carbs ?? "0"}
+          unit="g"
+          onPress={() => handleOpen("carbs", dailyGoal.carbs ?? "0")}
+        />
+        <Divider />
+        <DailyGoalsButton
+          title="Protein"
+          value={dailyGoal.protein ?? "0"}
+          unit="g"
+          onPress={() => handleOpen("protein", dailyGoal.protein ?? "0")}
+        />
+        <Divider />
+        <DailyGoalsButton
+          title="Fat"
+          value={dailyGoal.fat ?? "0"}
+          unit="g"
+          onPress={() => handleOpen("fat", dailyGoal.fat ?? "0")}
+        />
+      </View>
+
+      <TouchableOpacity
+        style={styles.resetBtn}
+        onPress={resetDailyGoal}
+        activeOpacity={0.7}
+      >
+        <Text style={styles.resetBtnText}>Reset to Default</Text>
+      </TouchableOpacity>
 
       {/* ======== MODAL SHEET ======== */}
       <DailyGoalsModal
@@ -100,6 +111,9 @@ const DailyGoals = () => {
 export default DailyGoals;
 
 const styles = StyleSheet.create({
+  wrapper: {
+    gap: 12,
+  },
   container: {
     backgroundColor: colors.border,
     borderWidth: 1,
@@ -133,5 +147,18 @@ const styles = StyleSheet.create({
     color: colors.textMuted,
     fontSize: 13,
     fontWeight: "400",
+  },
+  resetBtn: {
+    backgroundColor: colors.border,
+    borderWidth: 1,
+    borderColor: colors.border,
+    borderRadius: 8,
+    paddingVertical: 12,
+    alignItems: "center",
+  },
+  resetBtnText: {
+    color: colors.primary,
+    fontSize: 15,
+    fontWeight: "700",
   },
 });
